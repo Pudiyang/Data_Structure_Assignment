@@ -14,6 +14,11 @@ const solve = (intervals) => {
         if (curr[1] > next[0]) {
             let overlap = curr[1] - next[0]
             impact[i] -= overlap
+            // if any impact value is negtive, then stop the loop
+            if (impact[i] <= 0) {
+                guard = i
+                break
+            }
             impact[i + 1] -= overlap
         }
     }
