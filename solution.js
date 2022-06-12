@@ -14,11 +14,6 @@ const solve = (intervals) => {
         if (curr[1] > next[0]) {
             let overlap = curr[1] - next[0]
             impact[i] -= overlap
-            // if a lifegurad has zero or negtive impact on the maximum coverage, then end the loop
-            if (impact[i] <= 0) {
-                guard = i
-                break
-            }
             impact[i + 1] -= overlap
         }
     }
@@ -28,9 +23,14 @@ const solve = (intervals) => {
     // calculate the maximum coverage
     let maximum_coverage = 0
     for (let i = 0; i < intervals.length; i++) {
-        let coverage = intervals[i][1] - intervals[i][0]
-        if (i + 1 < intervals.length && intervals[i + 1][0] < intervals[i][1]) {
-            coverage -= intervals[i][1] - intervals[i + 1][0]
+        const [start, end] = intervals[i]
+        let coverage = end - start
+        // skip if next interval is covered by current interval
+        while (i + 1 < intervals.length && intervals[i + 1][1] <= end) {
+            i++
+        }
+        if (i + 1 < intervals.length && intervals[i + 1][0] < end) {
+            coverage -= end - intervals[i + 1][0]
         }
         maximum_coverage += coverage
     }
