@@ -5,21 +5,27 @@ const solution = (intervals) => {
     // Time: O(logN)
     intervals.sort((a, b) => a[0] - b[0])
     let impact = intervals.map((i) => i[1] - i[0])
-    
+
     // find the lifegurad with minimum impact and fire him
     // Time: O(N)
+    let firedGuard = null
     for (let i = 0; i < intervals.length - 1; i++) {
         let curr = intervals[i], next = intervals[i + 1]
         if (curr[1] > next[0]) {
             let overlap = curr[1] - next[0]
-            impact[i] -= overlap 
+            impact[i] -= overlap
+            // if a lifegurad has zero or negtive impact on the maximum coverage, then end the loop
+            if (impact[i] <= 0) {
+                firedGuard = i
+                break
+            }
             impact[i + 1] -= overlap
         }
     }
-    let firedGuard = impact.indexOf(Math.min(...impact))
+    if (!firedGuard) firedGuard = impact.indexOf(Math.min(...impact))
     // Time: O(N)
-    intervals.splice(firedGuard , 1)
-    
+    intervals.splice(firedGuard, 1)
+
     // calculate the maximum coverage
     // Time: O(N)
     let maximum_coverage = 0
@@ -31,7 +37,7 @@ const solution = (intervals) => {
         maximum_coverage += coverage
     }
     return maximum_coverage
-  }
+}
 
-  const input = [[1, 4], [5, 9], [3, 7]]
-  console.log(solution(input))
+const input = [[1, 4], [5, 9], [3, 7]]
+console.log(solution(input))
