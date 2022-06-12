@@ -1,14 +1,14 @@
+var fs = require("fs");
+
 // Time: O(N)
 // Space: O(N)
-const solution = (intervals) => {
+const solve = (intervals) => {
     // sort according to the start point 
-    // Time: O(logN)
     intervals.sort((a, b) => a[0] - b[0])
     let impact = intervals.map((i) => i[1] - i[0])
 
     // find the lifegurad with minimum impact and fire him
-    // Time: O(N)
-    let firedGuard = null
+    let guard = null
     for (let i = 0; i < intervals.length - 1; i++) {
         let curr = intervals[i], next = intervals[i + 1]
         if (curr[1] > next[0]) {
@@ -16,18 +16,16 @@ const solution = (intervals) => {
             impact[i] -= overlap
             // if a lifegurad has zero or negtive impact on the maximum coverage, then end the loop
             if (impact[i] <= 0) {
-                firedGuard = i
+                guard = i
                 break
             }
             impact[i + 1] -= overlap
         }
     }
-    if (!firedGuard) firedGuard = impact.indexOf(Math.min(...impact))
-    // Time: O(N)
-    intervals.splice(firedGuard, 1)
+    if (!guard) guard = impact.indexOf(Math.min(...impact))
+    intervals.splice(guard, 1)
 
     // calculate the maximum coverage
-    // Time: O(N)
     let maximum_coverage = 0
     for (let i = 0; i < intervals.length; i++) {
         let coverage = intervals[i][1] - intervals[i][0]
@@ -39,5 +37,24 @@ const solution = (intervals) => {
     return maximum_coverage
 }
 
-const input = [[1, 4], [5, 9], [3, 7]]
-console.log(solution(input))
+const readFile = (i) => {
+    let data = fs.readFileSync(i + '.in').toString(), 
+    raw_intervals = data.toString().split("\n"),
+    intervals = []
+    for (let i = 1; i < raw_intervals.length; i++) {
+        const interval = raw_intervals[i].split(" ")
+        if (interval[0] && interval[1]) {
+            intervals.push([Number.parseInt(interval[0]), Number.parseInt(interval[1])])
+        }
+    }
+    return intervals
+}
+
+// main logic
+for (let i = 1; i <= 10; i++) {
+    const intervals = readFile(i)
+    const coverage = solve(intervals)
+    fs.writeFileSync(i + ".out", coverage.toString())
+}
+
+
